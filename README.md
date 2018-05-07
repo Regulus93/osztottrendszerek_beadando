@@ -1,0 +1,1 @@
+# osztottrendszerek_beadando
