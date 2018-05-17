@@ -5,7 +5,7 @@ public class Secret {
     private int team;
     private boolean isBetrayed;
 
-    public Secret(String content, int team){
+    public Secret(String content, int team) {
         this.content = content;
         this.team = team;
         isBetrayed = false;

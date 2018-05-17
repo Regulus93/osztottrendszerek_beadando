@@ -8,6 +8,12 @@ import java.util.*;
 
 public class Agent implements AgentInterface, Runnable {
 
+    public static int t1;
+    public static int t2;
+
+    public static final int PORT_INTERVAL_START = 20000;
+    public static final int PORT_INTERVAL_END = 20100;
+
     //own properties
     private List<String> ownAliases;
     private List<Secret> secrets;
@@ -20,9 +26,9 @@ public class Agent implements AgentInterface, Runnable {
     private AgentClient client;
 
     //to the game logic
-    private Map<String,Agent> knownAgents;
+    private Map<String, Agent> knownAgents;
 
-    public Agent(int teamNumber, int memberNumber){
+    public Agent(int teamNumber, int memberNumber) {
         this.teamNumber = teamNumber;
         this.memberNumber = memberNumber;
         isArrested = false;
@@ -80,20 +86,20 @@ public class Agent implements AgentInterface, Runnable {
         isArrested = arrested;
     }
 
-    public int countEnemySecrets(){
+    public int countEnemySecrets() {
         int enemySecretCount = 0;
-        for (Secret s: secrets) {
-            if(s.getTeam() != teamNumber){
+        for (Secret s : secrets) {
+            if (s.getTeam() != teamNumber) {
                 enemySecretCount++;
             }
         }
         return enemySecretCount;
     }
 
-    public int countBetrayedSecrets(){
+    public int countBetrayedSecrets() {
         int betrayedSecretCount = 0;
-        for(Secret s: secrets){
-            if(s.isBetrayed()){
+        for (Secret s : secrets) {
+            if (s.isBetrayed()) {
                 betrayedSecretCount++;
             }
         }
@@ -102,7 +108,7 @@ public class Agent implements AgentInterface, Runnable {
 
     @Override
     public int guessTeam(String alias) {
-        if(knownAgents.containsKey(alias)){
+        if (knownAgents.containsKey(alias)) {
             return knownAgents.get(alias).getTeamNumber();
         } else {
             Random r = new Random();
@@ -121,15 +127,15 @@ public class Agent implements AgentInterface, Runnable {
     }
 
     @Override
-    public Secret chooseSecret(int otherPlayerTeamNumber){
+    public Secret chooseSecret(int otherPlayerTeamNumber) {
         int randomIndex = 0;
         Random r = new Random();
-        if(teamNumber == otherPlayerTeamNumber){
+        if (teamNumber == otherPlayerTeamNumber) {
             randomIndex = r.nextInt(secrets.size());
         } else {
-            if(secrets.size() > countBetrayedSecrets()){
+            if (secrets.size() > countBetrayedSecrets()) {
                 boolean isBetrayed = true;
-                while(isBetrayed){
+                while (isBetrayed) {
                     randomIndex = r.nextInt(secrets.size());
                     isBetrayed = secrets.get(randomIndex).isBetrayed();
                 }
@@ -151,13 +157,15 @@ public class Agent implements AgentInterface, Runnable {
 
     @Override
     public void run() {
-        System.out.format("[Team %d Member %d] Started.\n",teamNumber,memberNumber);
+        System.out.format("[Team %d Member %d] Started.\n", teamNumber, memberNumber);
+
 
         //srv
-        server = new AgentServer();
+        server = new AgentServer(teamNumber,memberNumber);
         server.run();
+
         //cli
-        client = new AgentClient();
+        client = new AgentClient(teamNumber,memberNumber);
         client.run();
 
     }
