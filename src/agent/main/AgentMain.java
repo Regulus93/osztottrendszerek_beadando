@@ -7,28 +7,23 @@ public class AgentMain{
     public static void main(String[] args){
 
         /*
-            Test for the first basic methods in Agent
+            Test for two Agent connection
          */
 
+        if(args.length != 2){
+            System.out.println("The software works with two commandline argument! \n The program exiting..");
+            System.exit(0);
+        }
+
+        int t1 = Integer.parseInt(args[0]);
+        int t2 = Integer.parseInt(args[1]);
+
         //Init
-        Agent a = new Agent(1,1);
-        Secret s1 = new Secret("Asd",1);
-        Secret s2 = new Secret("Dsa",1);
-        a.getSecrets().add(s1);
-        a.getSecrets().add(s2);
-        a.getOwnAliases().add("Fredi");
-        a.getOwnAliases().add("Krueger");
-        a.getOwnAliases().add("Istvan");
+        Agent a1 = new Agent(1,1);
+        Agent a2 = new Agent(1,2);
 
-        //Secret-handling
-        Secret result = a.chooseSecret(2);
-        System.out.println("Chosen secret: " + result.getContent() + " (is betrayed? " + result.isBetrayed() + ")");
-        Secret result2 = a.chooseSecret(2);
-        System.out.println("Chosen secret: " + result2.getContent() + " (is betrayed? " + result2.isBetrayed() + ")");
-        System.out.println("Betrayed secrets number: " + a.countBetrayedSecrets());
+        a1.run();
+        a2.run();
 
-        //Get random aliases
-        System.out.println("Random alias: " + a.chooseAlias());
-        System.out.println("Random alias: " + a.chooseAlias());
     }
 }

@@ -1,5 +1,7 @@
 package agent;
 
+import agent.communication.AgentClient;
+import agent.communication.AgentServer;
 import agent.secret.Secret;
 
 import java.util.*;
@@ -12,6 +14,10 @@ public class Agent implements AgentInterface, Runnable {
     private int teamNumber;
     private int memberNumber;
     private boolean isArrested;
+
+    //Agent srv and cli threads
+    private AgentServer server;
+    private AgentClient client;
 
     //to the game logic
     private Map<String,Agent> knownAgents;
@@ -145,6 +151,14 @@ public class Agent implements AgentInterface, Runnable {
 
     @Override
     public void run() {
+        System.out.format("[Team %d Member %d] Started.\n",teamNumber,memberNumber);
+
+        //srv
+        server = new AgentServer();
+        server.run();
+        //cli
+        client = new AgentClient();
+        client.run();
 
     }
 
