@@ -4,7 +4,7 @@ A beadandó programban olyan játékot készítünk el, amelyben két ügynöks�
 
 ###### A program működésének minden főbb lépése megtételekor írjon ki információt a sztenderd kimenetre arról, mi történik éppen!
 
-Az agent.AgentMain főprogram parancssori paraméterként megkapja a titkosügynökök darabszámát (n és m), és elindít mindegyiküknek egy-egy szálat. A főprogram megkapja továbbá a programban szükséges várakozás hosszának alsó és felső korlátját ezredmásodpercben mérve (t1 és t2).
+Az agent.main.AgentMain főprogram parancssori paraméterként megkapja a titkosügynökök darabszámát (n és m), és elindít mindegyiküknek egy-egy szálat. A főprogram megkapja továbbá a programban szükséges várakozás hosszának alsó és felső korlátját ezredmásodpercben mérve (t1 és t2).
 
 Mindegyik titkosügynök adatai egy fájlban vannak leírva. A fájl neve agentO-U.txt, ahol O értéke 1 vagy 2 attól függően, hogy melyik ügynökségbe tartozik az ügynök, és U az ügynök sorszáma. Például agent2-5.txt a második ügynökség ötös sorszámú ügynökéhez tartozik. A fájl két sort tartalmaz:
 
