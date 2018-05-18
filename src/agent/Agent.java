@@ -4,6 +4,8 @@ import agent.communication.AgentClient;
 import agent.communication.AgentServer;
 import agent.secret.Secret;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 public class Agent implements AgentInterface, Runnable {
@@ -36,6 +38,8 @@ public class Agent implements AgentInterface, Runnable {
         ownAliases = new ArrayList<>();
         secrets = new ArrayList<>();
         knownAgents = new HashMap<>();
+
+        agentInitFromFile();
     }
 
     public List<String> getOwnAliases() {
@@ -155,17 +159,36 @@ public class Agent implements AgentInterface, Runnable {
         return ownAliases.get(randomIndex);
     }
 
+    private void agentInitFromFile() {
+        File f = new File("src/resources/input/agent"+teamNumber+"-"+memberNumber+".txt");
+        try {
+            Scanner sc = new Scanner(f);
+            while (sc.hasNextLine()) {
+                String[] splittedLine = sc.nextLine().split(" ");
+                if (splittedLine.length > 1) {
+                    for (int i = 0; i < splittedLine.length; ++i) {
+                        ownAliases.add(splittedLine[i]);
+                    }
+                } else if (splittedLine.length == 1) {
+                    secrets.add(new Secret(splittedLine[0],teamNumber));
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void run() {
         System.out.format("[Team %d Member %d] Started.\n", teamNumber, memberNumber);
 
 
         //srv
-        server = new AgentServer(teamNumber,memberNumber);
+        server = new AgentServer(teamNumber, memberNumber);
         server.run();
 
         //cli
-        client = new AgentClient(teamNumber,memberNumber);
+        client = new AgentClient(teamNumber, memberNumber);
         client.run();
 
     }
