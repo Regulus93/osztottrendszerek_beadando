@@ -33,28 +33,27 @@ public class AgentServer implements Runnable {
                 System.out.println("[START OF SRV LOOP]");
                 ss = new ServerSocket(PORT);
                 ss.setSoTimeout(Agent.t2);
-                Thread.sleep(10000);
                 s = ss.accept();
                 sc = new Scanner(s.getInputStream(), "utf-8");
                 pw = new PrintWriter(s.getOutputStream());
                 String be = sc.nextLine();
-                System.out.println(be);
-                pw.println(be);
+                System.out.println("[SRV] " + be);
+                pw.println("Válasz a szervertől: " + be);
                 pw.flush();
                 System.out.println("[END OF SRV LOOP]");
             } catch (IOException e) {
                 e.printStackTrace();
-            } catch (InterruptedException e) {
+            }
+            pw.close();
+            sc.close();
+
+            try {
+                s.close();
+                ss.close();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        pw.close();
-        sc.close();
-        try {
-            s.close();
-            ss.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
     }
 }

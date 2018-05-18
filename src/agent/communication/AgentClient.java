@@ -5,6 +5,7 @@ import agent.main.AgentMain;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class AgentClient implements Runnable {
@@ -36,19 +37,18 @@ public class AgentClient implements Runnable {
                 pw.flush();
                 String be = sc.nextLine();
 
-                System.out.println(be);
+                System.out.println("[CLI] " + be);
                 System.out.println("[END OF CLIENT LOOP]");
+
+                sc.close();
+                pw.close();
+                s.close();
+            } catch (NoSuchElementException e) {
+                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-        pw.close();
-        sc.close();
-        try {
-            s.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

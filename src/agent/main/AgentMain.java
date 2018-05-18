@@ -51,13 +51,13 @@ public class AgentMain {
 //            agent.run();
 //        }
 
-//        try {
-//            Thread.sleep(1000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-//        endGame = true;
+        endGame = true;
 
     }
 }
