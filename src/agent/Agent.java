@@ -184,11 +184,11 @@ public class Agent implements AgentInterface, Runnable {
 
 
         //srv
-        server = new AgentServer(teamNumber, memberNumber);
+        server = new AgentServer(teamNumber, memberNumber, this);
         new Thread(server, "server").start();
 
         //cli
-        client = new AgentClient(teamNumber, memberNumber);
+        client = new AgentClient(teamNumber, memberNumber, this);
         new Thread(client, "client").start();
 
     }
