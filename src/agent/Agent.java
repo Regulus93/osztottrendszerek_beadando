@@ -14,7 +14,7 @@ public class Agent implements AgentInterface, Runnable {
     public static int t2;
 
     public static final int PORT_INTERVAL_START = 20000;
-    public static final int PORT_INTERVAL_END = 20100;
+    public static Set<Integer> currentPorts;
 
     //own properties
     private List<String> ownAliases;
@@ -38,6 +38,7 @@ public class Agent implements AgentInterface, Runnable {
         ownAliases = new ArrayList<>();
         secrets = new ArrayList<>();
         knownAgents = new HashMap<>();
+        currentPorts = new HashSet<>();
 
         agentInitFromFile();
     }
@@ -181,9 +182,15 @@ public class Agent implements AgentInterface, Runnable {
     public static int generateNewPortNumber(int currentPort){
         int newPort = 0;
         Random r = new Random();
+
         do {
             newPort = Agent.PORT_INTERVAL_START + r.nextInt(20);
         } while (currentPort == newPort);
+
+        if(currentPorts.size() == 2){
+            currentPorts.remove(currentPort);
+        }
+        currentPorts.add(newPort);
 
         return newPort;
     }
