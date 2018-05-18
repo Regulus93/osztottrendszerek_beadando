@@ -7,11 +7,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Random;
 import java.util.Scanner;
 
 public class AgentServer implements Runnable {
 
-    final int PORT = 12345;
 
     private int teamNumber;
     private int memberNumber;
@@ -24,18 +24,27 @@ public class AgentServer implements Runnable {
     @Override
     public void run() {
         System.out.format("[Team %d Member %d ]Hello I will ensure the server side in the run.\n", teamNumber, memberNumber);
+        Random r = new Random();
+        int port = 0;
+        int calcPort = 0;
         ServerSocket ss = null;
         Socket s = null;
         Scanner sc = null;
         PrintWriter pw = null;
         while (!AgentMain.endGame) {
-            try {
+
+            do {
+                calcPort = Agent.PORT_INTERVAL_START + r.nextInt(3);
+            } while (calcPort == port);
+            port = calcPort;
+            try
+            {
+                ss = new ServerSocket(port);
+                s        = ss.accept();
+                sc      = new Scanner(s.getInputStream(), "utf-8");
+                pw  = new PrintWriter(s.getOutputStream());
                 System.out.println("[START OF SRV LOOP]");
-                ss = new ServerSocket(PORT);
                 ss.setSoTimeout(Agent.t2);
-                s = ss.accept();
-                sc = new Scanner(s.getInputStream(), "utf-8");
-                pw = new PrintWriter(s.getOutputStream());
                 String be = sc.nextLine();
                 System.out.println("[SRV] " + be);
                 pw.println("Válasz a szervertől: " + be);
@@ -44,16 +53,15 @@ public class AgentServer implements Runnable {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            pw.close();
-            sc.close();
-
             try {
+                sc.close();
                 s.close();
+                pw.close();
                 ss.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-
+        System.out.println("[FFFF]");
     }
 }

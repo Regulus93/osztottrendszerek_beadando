@@ -36,20 +36,22 @@ public class AgentMain {
 
         List<Agent> team1 = new ArrayList<>();
         List<Agent> team2 = new ArrayList<>();
-//
-        for (int i = 0; i < n; i++) {
-            Agent agent = new Agent(1, i+1);
-            team1.add(agent);
-            agent.run();
-        }
 
-//        System.out.println("Full secret: " + team1.get(0).getSecrets().get(0).getContent() + " " + team1.get(1).getSecrets().get(0).getContent() + " " + team1.get(2).getSecrets().get(0).getContent());
+        new Thread(() -> {
+            for (int i = 0; i < n; i++) {
+                Agent agent = new Agent(1, i+1);
+                team1.add(agent);
+                agent.run();
+            }
+        }).start();
 
-//        for (int i = 0; i < m; i++) {
-//            Agent agent = new Agent(2, i);
-//            team2.add(agent);
-//            agent.run();
-//        }
+        new Thread(() -> {
+            for (int i = 0; i < m; i++) {
+                Agent agent = new Agent(2, i);
+                team2.add(agent);
+                agent.run();
+            }
+        }).start();
 
         try {
             Thread.sleep(10000);
