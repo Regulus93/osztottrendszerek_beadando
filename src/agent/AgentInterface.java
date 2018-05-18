@@ -1,7 +1,5 @@
 package agent;
 
-import agent.secret.Secret;
-
 public interface AgentInterface {
 
     String chooseAlias();

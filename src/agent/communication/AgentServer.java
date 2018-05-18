@@ -1,15 +1,14 @@
 package agent.communication;
 
 import agent.Agent;
-import agent.main.AgentMain;
 import agent.secret.Secret;
+import game.SimpleGameLogic;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.util.Random;
 import java.util.Scanner;
 
 public class AgentServer implements Runnable {
@@ -33,7 +32,7 @@ public class AgentServer implements Runnable {
         Scanner sc = null;
         PrintWriter pw = null;
         int currentPort = 0;
-//        while (!AgentMain.endGame && !agent.isArrested()) {
+        while (!SimpleGameLogic.endGame && !agent.isArrested()) {
                 currentPort = Agent.generateNewPortNumber(currentPort);
             try {
                 ss = new ServerSocket(currentPort);
@@ -63,7 +62,7 @@ public class AgentServer implements Runnable {
                 }
             }
 
-//        }
+        }
         System.out.format("[SRV %d-%d] Shutdown...\n",agent.getTeamNumber(),agent.getMemberNumber());
     }
 

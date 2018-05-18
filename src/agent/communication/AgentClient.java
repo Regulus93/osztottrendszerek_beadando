@@ -3,6 +3,7 @@ package agent.communication;
 import agent.Agent;
 import agent.main.AgentMain;
 import agent.secret.Secret;
+import game.SimpleGameLogic;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -34,7 +35,7 @@ public class AgentClient implements Runnable {
         Random r = new Random();
         int retryInterval = 0;
         int currentPort = 0;
-//        while (!AgentMain.endGame) {
+        while (!SimpleGameLogic.endGame) {
             currentPort = Agent.generateNewPortNumber(currentPort);
             try {
                 System.out.format("[CLI %d-%d] Try to connect with port number: ",agent.getTeamNumber(),agent.getMemberNumber(),currentPort);
@@ -68,7 +69,7 @@ public class AgentClient implements Runnable {
             }
 
 
-//        }
+        }
         System.out.format("[CLI %d-%d] Shutdown...\n",agent.getTeamNumber(),agent.getMemberNumber());
     }
 
@@ -121,6 +122,23 @@ public class AgentClient implements Runnable {
         } else {
             agent.addSecret(new Secret(secretText,otherTeamIndex));
             System.out.format("[CLI %d-%d] Thank you very much, we will win! MUHAHAHA\n",agent.getTeamNumber(),agent.getMemberNumber());
+        }
+
+        //
+        if(otherTeamIndex == 1){
+            if(agent.countEnemySecrets() == AgentMain.n){
+                synchronized (SimpleGameLogic.lock){
+                    SimpleGameLogic.lock.notify();
+                    SimpleGameLogic.winner = agent;
+                }
+            }
+        } else {
+            if(agent.countEnemySecrets() == AgentMain.m){
+                synchronized (SimpleGameLogic.lock){
+                SimpleGameLogic.lock.notify();
+                SimpleGameLogic.winner = agent;
+                }
+            }
         }
 
         }

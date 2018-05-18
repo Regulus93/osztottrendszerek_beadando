@@ -4,6 +4,7 @@ import agent.communication.AgentClient;
 import agent.communication.AgentServer;
 import agent.main.AgentMain;
 import agent.secret.Secret;
+import game.SimpleGameLogic;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,7 +20,7 @@ public class Agent implements AgentInterface, Runnable {
 
     //own properties
     private List<String> ownAliases;
-    private List<Secret> secrets;
+    private Map<String,Secret> secrets;
     private int teamNumber;
     private int memberNumber;
     private boolean isArrested;
@@ -37,7 +38,7 @@ public class Agent implements AgentInterface, Runnable {
         isArrested = false;
 
         ownAliases = new ArrayList<>();
-        secrets = new ArrayList<>();
+        secrets = new HashMap<>();
         knownAgents = new HashMap<>();
         currentPorts = new HashSet<>();
 
@@ -52,16 +53,16 @@ public class Agent implements AgentInterface, Runnable {
         this.ownAliases = ownAliases;
     }
 
-    public List<Secret> getSecrets() {
+    public Map<String,Secret> getSecrets() {
         return secrets;
     }
 
-    public void setSecrets(List<Secret> secrets) {
+    public void setSecrets(Map<String,Secret> secrets) {
         this.secrets = secrets;
     }
 
     public void addSecret(Secret s){
-        this.secrets.add(s);
+        this.secrets.put(s.getContent(),s);
     }
 
     public int getTeamNumber() {
@@ -98,7 +99,7 @@ public class Agent implements AgentInterface, Runnable {
 
     public int countEnemySecrets() {
         int enemySecretCount = 0;
-        for (Secret s : secrets) {
+        for (Secret s : secrets.values()) {
             if (s.getTeam() != teamNumber) {
                 enemySecretCount++;
             }
@@ -108,7 +109,7 @@ public class Agent implements AgentInterface, Runnable {
 
     public int countBetrayedSecrets() {
         int betrayedSecretCount = 0;
-        for (Secret s : secrets) {
+        for (Secret s : secrets.values()) {
             if (s.isBetrayed()) {
                 betrayedSecretCount++;
             }
@@ -145,23 +146,25 @@ public class Agent implements AgentInterface, Runnable {
 
     @Override
     public String chooseSecret(boolean isSameTeam) {
-        int randomIndex = 0;
-        Random r = new Random();
+        Random       random    = new Random();
+        List<String> keys      = new ArrayList<String>(secrets.keySet());
+        String       randomKey = null;
         if (isSameTeam) {
-            randomIndex = r.nextInt(secrets.size());
+            randomKey = keys.get( random.nextInt(keys.size()) );
         } else {
             if (secrets.size() > countBetrayedSecrets()) {
                 boolean isBetrayed = true;
                 while (isBetrayed) {
-                    randomIndex = r.nextInt(secrets.size());
-                    isBetrayed = secrets.get(randomIndex).isBetrayed();
+                    randomKey = keys.get( random.nextInt(keys.size()) );
+                    isBetrayed = secrets.get(randomKey).isBetrayed();
                 }
-                secrets.get(randomIndex).setIsBetrayed(true);
+                secrets.get(randomKey).setIsBetrayed(true);
             } else {
                 isArrested = true;
+                SimpleGameLogic.checkGroupIsArrested(teamNumber);
             }
         }
-        return secrets.get(randomIndex).getContent();
+        return secrets.get(randomKey).getContent();
     }
 
     @Override
@@ -182,7 +185,7 @@ public class Agent implements AgentInterface, Runnable {
                         ownAliases.add(splittedLine[i]);
                     }
                 } else if (splittedLine.length == 1) {
-                    secrets.add(new Secret(splittedLine[0],teamNumber));
+                    secrets.put(splittedLine[0],new Secret(splittedLine[0],teamNumber));
                 }
             }
         } catch (FileNotFoundException e) {
@@ -203,7 +206,7 @@ public class Agent implements AgentInterface, Runnable {
         }
         currentPorts.add(newPort);
 
-        return 12345;
+        return newPort;
     }
 
     @Override
