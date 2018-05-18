@@ -7,14 +7,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.Random;
 import java.util.Scanner;
 
 public class AgentServer implements Runnable {
 
-    final int PORT = 12345;
 
     private int teamNumber;
     private int memberNumber;
@@ -57,7 +55,7 @@ public class AgentServer implements Runnable {
 //                e.printStackTrace();
                 System.out.println("!!!!TIMEOUT!");
             } catch (IOException e) {
-//                e.printStackTrace();
+                e.printStackTrace();
             }
 
             if(s != null){

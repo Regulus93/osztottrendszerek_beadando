@@ -12,8 +12,7 @@ import java.util.Scanner;
 
 public class AgentClient implements Runnable {
 
-    final String GEP = "127.0.0.1";
-    final int PORT = 12345;
+    final String HOST = "127.0.0.1";
 
     private int teamNumber;
     private int memberNumber;
@@ -47,23 +46,23 @@ public class AgentClient implements Runnable {
                 System.out.format("I will retry on another port after: %d ms\n", retryInterval);
                 Thread.sleep(retryInterval);
 
-                s = new Socket(GEP, currentPort);
+                s = new Socket(HOST, currentPort);
                 sc = new Scanner(s.getInputStream(), "utf-8");
                 pw = new PrintWriter(s.getOutputStream());
                 pw.println("hello world, bla.. bla .. bla..");
                 pw.flush();
                 String be = sc.nextLine();
 
-//                System.out.println("[CLI] " + be);
-//                System.out.println("[END OF CLIENT LOOP]");
+                System.out.println("[CLI] " + be);
+                System.out.println("[END OF CLIENT LOOP]");
 
                 sc.close();
                 pw.close();
                 s.close();
             } catch (NoSuchElementException e) {
-//                e.printStackTrace();
+                e.printStackTrace();
             } catch (IOException e) {
-//                e.printStackTrace();
+                e.printStackTrace();
             } catch (InterruptedException e) {
 //                e.printStackTrace();
             }
