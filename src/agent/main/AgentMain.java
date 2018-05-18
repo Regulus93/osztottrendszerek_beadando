@@ -2,11 +2,8 @@ package agent.main;
 
 import agent.Agent;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class AgentMain {
 
@@ -47,7 +44,7 @@ public class AgentMain {
 
         new Thread(() -> {
             for (int i = 0; i < m; i++) {
-                Agent agent = new Agent(2, i);
+                Agent agent = new Agent(2, i+1);
                 team2.add(agent);
                 agent.run();
             }
