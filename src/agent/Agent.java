@@ -2,6 +2,7 @@ package agent;
 
 import agent.communication.AgentClient;
 import agent.communication.AgentServer;
+import agent.main.AgentMain;
 import agent.secret.Secret;
 
 import java.io.File;
@@ -57,6 +58,10 @@ public class Agent implements AgentInterface, Runnable {
 
     public void setSecrets(List<Secret> secrets) {
         this.secrets = secrets;
+    }
+
+    public void addSecret(Secret s){
+        this.secrets.add(s);
     }
 
     public int getTeamNumber() {
@@ -122,20 +127,27 @@ public class Agent implements AgentInterface, Runnable {
     }
 
     @Override
-    public int guessMemberNumber(String alias, int memberNumberRange) {
+    public int guessMemberNumber(String alias, int otherPlayerTeam) {
         if (knownAgents.containsKey(alias)) {
             return knownAgents.get(alias).getTeamNumber();
         } else {
+            int memberNumberRange;
+            if(otherPlayerTeam == 1){
+                memberNumberRange = AgentMain.n;
+            } else {
+                memberNumberRange = AgentMain.m;
+            }
+
             Random r = new Random();
-            return r.nextInt(memberNumberRange);
+            return r.nextInt(memberNumberRange)+1;
         }
     }
 
     @Override
-    public Secret chooseSecret(int otherPlayerTeamNumber) {
+    public String chooseSecret(boolean isSameTeam) {
         int randomIndex = 0;
         Random r = new Random();
-        if (teamNumber == otherPlayerTeamNumber) {
+        if (isSameTeam) {
             randomIndex = r.nextInt(secrets.size());
         } else {
             if (secrets.size() > countBetrayedSecrets()) {
@@ -147,10 +159,9 @@ public class Agent implements AgentInterface, Runnable {
                 secrets.get(randomIndex).setIsBetrayed(true);
             } else {
                 isArrested = true;
-                return null;
             }
         }
-        return secrets.get(randomIndex);
+        return secrets.get(randomIndex).getContent();
     }
 
     @Override
@@ -192,13 +203,12 @@ public class Agent implements AgentInterface, Runnable {
         }
         currentPorts.add(newPort);
 
-        return newPort;
+        return 12345;
     }
 
     @Override
     public void run() {
-        System.out.format("[Team %d Member %d] Started.\n", teamNumber, memberNumber);
-
+        System.out.format("[Team %d Member %d] I start my mission.\n", teamNumber, memberNumber);
 
         //srv
         server = new AgentServer(teamNumber, memberNumber, this);

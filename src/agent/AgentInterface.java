@@ -6,7 +6,7 @@ public interface AgentInterface {
 
     String chooseAlias();
 
-    Secret chooseSecret(int teamNumber);
+    String chooseSecret(boolean isSameTeam);
 
     int guessTeam(String alias);
 

@@ -9,21 +9,18 @@ public class AgentMain {
 
     public final static Object lock = new Object();
     public static boolean endGame = false;
+    public static int n;
+    public static int m;
 
     public static void main(String[] args) {
-
-        /*
-            Test for two Agent connection
-         */
-
 
         if (args.length != 4) {
             System.out.println("The software works with four commandline argument! \n The program exiting..");
             System.exit(0);
         }
 
-        int n = Integer.parseInt(args[0]);
-        int m = Integer.parseInt(args[1]);
+        n = Integer.parseInt(args[0]);
+        m = Integer.parseInt(args[1]);
 
         int t1 = Integer.parseInt(args[2]);
         int t2 = Integer.parseInt(args[3]);
@@ -51,7 +48,7 @@ public class AgentMain {
         }).start();
 
         try {
-            Thread.sleep(20000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

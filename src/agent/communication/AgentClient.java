@@ -2,6 +2,7 @@ package agent.communication;
 
 import agent.Agent;
 import agent.main.AgentMain;
+import agent.secret.Secret;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -33,36 +34,94 @@ public class AgentClient implements Runnable {
         Random r = new Random();
         int retryInterval = 0;
         int currentPort = 0;
-        while (!AgentMain.endGame) {
+//        while (!AgentMain.endGame) {
             currentPort = Agent.generateNewPortNumber(currentPort);
             try {
-                System.out.println("[START OF CLIENT LOOP] PORT NUMBER - " + currentPort + " WITH ENDGAME: " + AgentMain.endGame);
+                System.out.format("[CLI %d-%d] Try to connect with port number: ",agent.getTeamNumber(),agent.getMemberNumber(),currentPort);
 
                 retryInterval = r.nextInt(Agent.t2 - Agent.t1 + 1) + Agent.t1;
-                System.out.format("I will retry on another port after: %d ms\n", retryInterval);
+                System.out.format("[CLI %d-%d] I will retry on another port after: %d ms\n",agent.getTeamNumber(),agent.getMemberNumber(),retryInterval);
                 Thread.sleep(retryInterval);
 
                 s = new Socket(HOST, currentPort);
                 sc = new Scanner(s.getInputStream(), "utf-8");
                 pw = new PrintWriter(s.getOutputStream());
-                pw.println("hello world, bla.. bla .. bla..");
-                pw.flush();
-                String be = sc.nextLine();
 
-                System.out.println("[CLI] " + be);
-                System.out.println("[END OF CLIENT LOOP]");
+                clientProtocol(sc,pw);
 
+            } catch (NoSuchElementException e) {
+                System.out.format("[CLI %d-%d] [NoSuchElementException] Server closed the connection.\n",agent.getTeamNumber(),agent.getMemberNumber());
+            } catch (IOException e) {
+                System.out.format("[CLI %d-%d] [IOException] %s.\n",agent.getTeamNumber(),agent.getMemberNumber(),e.getMessage());
+            } catch (InterruptedException e) {
+                System.out.format("[CLI %d-%d] [InterruptedException] %s.\n",agent.getTeamNumber(),agent.getMemberNumber(),e.getMessage());
+            }
+
+            if(s!=null){
                 sc.close();
                 pw.close();
-                s.close();
-            } catch (NoSuchElementException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-//                e.printStackTrace();
+                try {
+                    s.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        }
-        System.out.println("[CLI] Shutdown...");
+
+
+//        }
+        System.out.format("[CLI %d-%d] Shutdown...\n",agent.getTeamNumber(),agent.getMemberNumber());
     }
+
+    public void clientProtocol(Scanner in, PrintWriter out){
+
+        //Titkos nev fogadasa
+        String srvAlias = in.nextLine();
+        System.out.format("[CLI %d-%d] Alias arrived: %s\n",agent.getTeamNumber(),agent.getMemberNumber(),srvAlias);
+
+        //Csapatot tippel
+        int teamTip = agent.guessTeam(srvAlias);
+        System.out.format("[CLI %d-%d] Team-tip: %d (my teamnumber is %d)\n",agent.getTeamNumber(),agent.getMemberNumber(),teamTip,agent.getTeamNumber());
+        out.println(teamTip);
+        out.flush();
+
+        //Jol tippelt csapatot a kliens
+        String teamTipIsOk = in.nextLine();
+        System.out.format("[CLI %d-%d] Server said that teamtip is %s!\n",agent.getTeamNumber(),agent.getMemberNumber(),teamTipIsOk);
+
+        //az informaciocsere tipusanak meghatarozasa
+        boolean isSameTeam = teamTip==agent.getTeamNumber();
+        int ownTeamIndex = agent.getTeamNumber();
+        int otherTeamIndex;
+        if(agent.getTeamNumber() == 1){
+            otherTeamIndex = 2;
+        } else {
+            otherTeamIndex = 1;
+        }
+
+        if(isSameTeam){
+            out.println("OK");
+            out.flush();
+            System.out.format("[CLI %d-%d] OK let's trade secrets, friend!\n",agent.getTeamNumber(),agent.getMemberNumber());
+        } else {
+            int memberNumberTip = agent.guessMemberNumber(srvAlias,teamTip);
+            out.println("??? " + memberNumberTip);
+            out.flush();
+            System.out.format("[CLI %d-%d] Hmmm, what's your member number, %d?\n",agent.getTeamNumber(),agent.getMemberNumber(),memberNumberTip);
+        }
+
+        //Titok fogadasa (ha azonos a csapat, akkor a kliens is kuld egyet)
+        String secretText = in.nextLine();
+        if(isSameTeam){
+            agent.addSecret(new Secret(secretText,ownTeamIndex));
+
+            System.out.format("[CLI %d-%d] Thank you very much! I send one secret back for you.\n",agent.getTeamNumber(),agent.getMemberNumber());
+
+            out.println(agent.chooseSecret(isSameTeam));
+            out.flush();
+        } else {
+            agent.addSecret(new Secret(secretText,otherTeamIndex));
+            System.out.format("[CLI %d-%d] Thank you very much, we will win! MUHAHAHA\n",agent.getTeamNumber(),agent.getMemberNumber());
+        }
+
+        }
 }
