@@ -2,6 +2,7 @@ package agent;
 
 import agent.communication.AgentClient;
 import agent.communication.AgentServer;
+import agent.main.AgentMain;
 import agent.secret.Secret;
 
 import java.io.File;
@@ -185,11 +186,11 @@ public class Agent implements AgentInterface, Runnable {
 
         //srv
         server = new AgentServer(teamNumber, memberNumber);
-        server.run();
+        new Thread(server, "server").start();
 
         //cli
         client = new AgentClient(teamNumber, memberNumber);
-        client.run();
+        new Thread(client, "client").start();
 
     }
 
