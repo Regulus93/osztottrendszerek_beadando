@@ -32,13 +32,9 @@ public class AgentClient implements Runnable {
         PrintWriter pw = null;
         Random r = new Random();
         int retryInterval = 0;
-        int calcPort = 0;
         int currentPort = 0;
         while (!AgentMain.endGame) {
-            do {
-                calcPort = Agent.PORT_INTERVAL_START + r.nextInt(1000);
-            } while (currentPort == calcPort);
-            currentPort = calcPort;
+            currentPort = Agent.generateNewPortNumber(currentPort);
             try {
                 System.out.println("[START OF CLIENT LOOP] PORT NUMBER - " + currentPort + " WITH ENDGAME: " + AgentMain.endGame);
 

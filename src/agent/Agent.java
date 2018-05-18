@@ -178,6 +178,16 @@ public class Agent implements AgentInterface, Runnable {
         }
     }
 
+    public static int generateNewPortNumber(int currentPort){
+        int newPort = 0;
+        Random r = new Random();
+        do {
+            newPort = Agent.PORT_INTERVAL_START + r.nextInt(20);
+        } while (currentPort == newPort);
+
+        return newPort;
+    }
+
     @Override
     public void run() {
         System.out.format("[Team %d Member %d] Started.\n", teamNumber, memberNumber);

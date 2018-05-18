@@ -31,14 +31,9 @@ public class AgentServer implements Runnable {
         Socket s = null;
         Scanner sc = null;
         PrintWriter pw = null;
-        Random r = new Random();
-        int calcPort = 0;
         int currentPort = 0;
         while (!AgentMain.endGame) {
-            do {
-                calcPort = Agent.PORT_INTERVAL_START + r.nextInt(3);
-            } while (currentPort == calcPort);
-            currentPort = calcPort;
+                currentPort = Agent.generateNewPortNumber(currentPort);
             try {
                 ss = new ServerSocket(currentPort);
                 ss.setSoTimeout(Agent.t2);
@@ -55,7 +50,7 @@ public class AgentServer implements Runnable {
 //                e.printStackTrace();
                 System.out.println("!!!!TIMEOUT!");
             } catch (IOException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
             }
 
             if(s != null){
